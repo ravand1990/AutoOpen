@@ -1,0 +1,9 @@
+Owner: ravand1990
+Name: AutoOpen
+Repository
+
+Ignore:
+src
+.gitignore
+.gitattributes
+README.md
