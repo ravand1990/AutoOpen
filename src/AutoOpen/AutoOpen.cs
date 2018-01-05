@@ -75,7 +75,7 @@ namespace AutoOpen
 
             foreach (EntityWrapper entity in entities)
             {
-                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door"))
+                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && !entity.HasComponent<Transitionable>() && entity.Path.ToLower().Contains("door"))
                 {
                     var entityPos = entity.Pos;
                     var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
@@ -151,5 +151,10 @@ namespace AutoOpen
             Mouse.moveMouse(prevMousePosition);
             Mouse.LeftDown(1);
         }
+    }
+
+    internal class Transitionable : PoeHUD.Poe.Component
+    {
+        public byte switchState => M.ReadByte(Address + 0x120);
     }
 }

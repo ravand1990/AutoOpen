@@ -10,12 +10,12 @@ namespace AutoOpen
         public Settings()
         {
             Enable = true;
-            Speed = new RangeNode<int>(5, 0, 100);
+            Speed = new RangeNode<int>(1, 0, 100);
 
             doors = true;
             switches = true;
-            doorDistance = new RangeNode<int>(100,0,300);
-            switchDistance = new RangeNode<int>(100, 0, 300);
+            doorDistance = new RangeNode<int>(150,0,300);
+            switchDistance = new RangeNode<int>(150, 0, 300);
         }
 
         [Menu("Speed")]
