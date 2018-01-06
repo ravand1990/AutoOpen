@@ -19,6 +19,8 @@ namespace AutoOpen
         private IngameState ingameState;
         private Dictionary<long, int> clickedEntities = new Dictionary<long, int>();
         private List<EntityWrapper> entities = new List<EntityWrapper>();
+        private Vector2 windowOffset = new Vector2();
+
 
         public AutoOpen()
         {
@@ -28,7 +30,9 @@ namespace AutoOpen
         public override void Initialise()
         {
             ingameState = GameController.Game.IngameState;
+            windowOffset = GameController.Window.GetWindowRectangle().TopLeft;
             base.Initialise();
+            
         }
 
         public override void Render()
@@ -84,6 +88,7 @@ namespace AutoOpen
             {
                 var entityPos = entity.Pos;
                 var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
+               
                 var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
 
                 //Doors
@@ -168,8 +173,9 @@ namespace AutoOpen
             }
         }
 
-        private void open(Vector2 entityScreenPos, Vector2 prevMousePosition)
+        private void open(Vector2 entityScreenPos , Vector2 prevMousePosition)
         {
+            entityScreenPos += windowOffset;
             Mouse.moveMouse(entityScreenPos);
             Mouse.LeftUp(1);
             Mouse.LeftDown(1);
