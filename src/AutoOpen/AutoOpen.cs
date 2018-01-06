@@ -9,6 +9,8 @@ using PoeHUD.Poe.Components;
 using PoeHUD.Poe.RemoteMemoryObjects;
 using SharpDX;
 using SharpDX.Direct3D9;
+using System.Linq;
+using System.Threading;
 
 namespace AutoOpen
 {
@@ -62,7 +64,11 @@ namespace AutoOpen
             "Door_Toggle_Closed",
             "Door_Toggle_Open",
             "SilverDoor",
-            "GoldenDoor"
+            "GoldenDoor",
+            "lock",
+            "close",
+            "open",
+            "hidden"
         };
 
         private void openDoor()
@@ -75,7 +81,7 @@ namespace AutoOpen
 
             foreach (EntityWrapper entity in entities)
             {
-                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && !entity.HasComponent<Transitionable>() && entity.Path.ToLower().Contains("door"))
+                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door") && !doorBlacklist.Any(s => entity.Path.ToLower().Contains(s.ToLower())))
                 {
                     var entityPos = entity.Pos;
                     var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
@@ -150,6 +156,7 @@ namespace AutoOpen
             Mouse.LeftUp(1);
             Mouse.moveMouse(prevMousePosition);
             Mouse.LeftDown(1);
+            Thread.Sleep(Settings.Speed);
         }
     }
 
