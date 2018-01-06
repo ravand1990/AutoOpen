@@ -17,6 +17,7 @@ namespace AutoOpen
     internal class AutoOpen : BaseSettingsPlugin<Settings>
     {
         private IngameState ingameState;
+        private Dictionary<long, int> clickedEntities = new Dictionary<long, int>();
 
         public AutoOpen()
         {
@@ -81,7 +82,7 @@ namespace AutoOpen
 
             foreach (EntityWrapper entity in entities)
             {
-                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door") && !doorBlacklist.Any(s => entity.Path.ToLower().Contains(s.ToLower())))
+                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door"))
                 {
                     var entityPos = entity.Pos;
                     var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
@@ -95,10 +96,27 @@ namespace AutoOpen
 
                     if (Control.MouseButtons == MouseButtons.Left)
                     {
-                        if (entityDistanceToPlayer <= Settings.doorDistance && isClosed)
+                        int clickCount = 0;
+
+                        if (clickedEntities.ContainsKey(entity.Address))
+                        {
+                            clickCount = clickedEntities[entity.Address];
+                        }
+                        else
+                        {
+                            clickedEntities.Add(entity.Address, clickCount);
+                        }
+
+                        if (entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 25)
                         {
                             open(entityScreenPos, prevMousePosition);
+                            clickedEntities[entity.Address] = clickCount + 1;
                         }
+                        else if (entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 25)
+                        {
+                            clickedEntities.Clear();
+                        }
+
                     }
                 }
             }
@@ -139,8 +157,9 @@ namespace AutoOpen
 
                     if (Control.MouseButtons == MouseButtons.Left)
                     {
-                        if (entityDistanceToPlayer <= Settings.doorDistance && !switched)
+                        if (entityDistanceToPlayer <= Settings.switchDistance && !switched)
                         {
+
                             open(entityScreenPos, prevMousePosition);
                         }
                     }
