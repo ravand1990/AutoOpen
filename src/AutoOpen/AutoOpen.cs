@@ -18,6 +18,7 @@ namespace AutoOpen
     {
         private IngameState ingameState;
         private Dictionary<long, int> clickedEntities = new Dictionary<long, int>();
+        private List<EntityWrapper> entities = new List<EntityWrapper>();
 
         public AutoOpen()
         {
@@ -32,21 +33,20 @@ namespace AutoOpen
 
         public override void Render()
         {
-            if (!Settings.Enable)
-                return;
-
-            if (Settings.doors) openDoor();
-            if (Settings.switches) openSwitch();
+            if (!Settings.Enable) return;
+            open();
         }
 
         public override void EntityAdded(EntityWrapper entityWrapper)
         {
             base.EntityAdded(entityWrapper);
+            entities.Add(entityWrapper);
         }
 
         public override void EntityRemoved(EntityWrapper entityWrapper)
         {
             base.EntityRemoved(entityWrapper);
+            entities.Remove(entityWrapper);
         }
 
         public override void OnClose()
@@ -72,96 +72,97 @@ namespace AutoOpen
             "hidden"
         };
 
-        private void openDoor()
+
+
+        private void open()
         {
-            var entities = GameController.Entities;
             var camera = ingameState.Camera;
             var playerPos = GameController.Player.Pos;
             var prevMousePosition = Mouse.GetCursorPosition();
 
-
             foreach (EntityWrapper entity in entities)
             {
-                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door") && !doorBlacklist.Any(s => entity.Path.ToLower().Contains(s.ToLower())))
+                var entityPos = entity.Pos;
+                var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
+                var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
+
+                //Doors
+                if (Settings.doors)
                 {
-                    var entityPos = entity.Pos;
-                    var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
-                    var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
-                    bool isClosed = entity.GetComponent<TriggerableBlockage>().IsClosed;
-
-                    string s = isClosed ? "closed" : "opened";
-                    Color c = isClosed ? Color.Red : Color.Green;
-
-                    Graphics.DrawText(s, 16, entityScreenPos, c, FontDrawFlags.Center);
-
-                    if (Control.MouseButtons == MouseButtons.Left)
+                    if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door") && !doorBlacklist.Any(s => entity.Path.ToLower().Contains(s.ToLower())))
                     {
-                        int clickCount = 0;
 
-                        if (clickedEntities.ContainsKey(entity.Address))
-                        {
-                            clickCount = clickedEntities[entity.Address];
-                        }
-                        else
-                        {
-                            clickedEntities.Add(entity.Address, clickCount);
-                        }
+                        bool isClosed = entity.GetComponent<TriggerableBlockage>().IsClosed;
 
-                        if (entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 25)
-                        {
-                            open(entityScreenPos, prevMousePosition);
-                            clickedEntities[entity.Address] = clickCount + 1;
-                        }
-                        else if (entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 25)
-                        {
-                            clickedEntities.Clear();
-                        }
+                        string s = isClosed ? "closed" : "opened";
+                        Color c = isClosed ? Color.Red : Color.Green;
 
+                        Graphics.DrawText(s, 16, entityScreenPos, c, FontDrawFlags.Center);
+
+                        if (Control.MouseButtons == MouseButtons.Left)
+                        {
+                            int clickCount = 0;
+
+                            if (clickedEntities.ContainsKey(entity.Address))
+                            {
+                                clickCount = clickedEntities[entity.Address];
+                            }
+                            else
+                            {
+                                clickedEntities.Add(entity.Address, clickCount);
+                            }
+
+                            if (entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 25)
+                            {
+                                open(entityScreenPos, prevMousePosition);
+                                clickedEntities[entity.Address] = clickCount + 1;
+                            }
+                            else if (entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 25)
+                            {
+                                clickedEntities.Clear();
+                            }
+                        }
                     }
                 }
-            }
-        }
 
-        private void openSwitch()
-        {
-            var entities = GameController.Entities;
-            var camera = ingameState.Camera;
-            var playerPos = GameController.Player.Pos;
-            var prevMousePosition = Mouse.GetCursorPosition();
-
-            foreach (EntityWrapper entity in entities)
-            {
-                if (entity.HasComponent<Transitionable>() && entity.HasComponent<Targetable>() && !entity.HasComponent<TriggerableBlockage>() && entity.Path.ToLower().Contains("switch"))
+                //Switches
+                if (Settings.switches)
                 {
-                    var entityPos = entity.Pos;
-                    var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
-                    bool isTargeted = entity.GetComponent<Targetable>().isTargeted;
-
-                    var switchState = entity.InternalEntity.GetComponent<Transitionable>().switchState;
-                    bool switched = switchState != 1;
-                    var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
-
-                    int count = 1;
-
-                    string s = isTargeted ? "targeted" : "not targeted";
-                    Color c = isTargeted ? Color.Green : Color.Red;
-
-                    Graphics.DrawText(s, 20, entityScreenPos.Translate(0, count * 16), c, FontDrawFlags.Center);
-                    count++;
-
-                    string s2 = switched ? "switched" : "not switched";
-                    Color c2 = switched ? Color.Green : Color.Red;
-
-                    Graphics.DrawText(s2 + ":" + switchState, 20, entityScreenPos.Translate(0, count * 16), c2, FontDrawFlags.Center);
-                    count++;
-
-                    if (Control.MouseButtons == MouseButtons.Left)
+                    if (entity.HasComponent<Transitionable>() && entity.HasComponent<Targetable>() && !entity.HasComponent<TriggerableBlockage>() && entity.Path.ToLower().Contains("switch"))
                     {
-                        if (entityDistanceToPlayer <= Settings.switchDistance && !switched)
-                        {
+                        bool isTargeted = entity.GetComponent<Targetable>().isTargeted;
 
-                            open(entityScreenPos, prevMousePosition);
+                        var switchState = entity.InternalEntity.GetComponent<Transitionable>().switchState;
+                        bool switched = switchState != 1;
+
+                        int count = 1;
+
+                        string s = isTargeted ? "targeted" : "not targeted";
+                        Color c = isTargeted ? Color.Green : Color.Red;
+
+                        Graphics.DrawText(s, 20, entityScreenPos.Translate(0, count * 16), c, FontDrawFlags.Center);
+                        count++;
+
+                        string s2 = switched ? "switched" : "not switched";
+                        Color c2 = switched ? Color.Green : Color.Red;
+
+                        Graphics.DrawText(s2 + ":" + switchState, 20, entityScreenPos.Translate(0, count * 16), c2, FontDrawFlags.Center);
+                        count++;
+
+                        if (Control.MouseButtons == MouseButtons.Left)
+                        {
+                            if (entityDistanceToPlayer <= Settings.switchDistance && !switched)
+                            {
+                                open(entityScreenPos, prevMousePosition);
+                            }
                         }
+                    }
+                }
+
+                if (Settings.chests)
+                {
+                    if (entity.Path.ToLower().Contains("chest"))
+                    {
                     }
                 }
             }
