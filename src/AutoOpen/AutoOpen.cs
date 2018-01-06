@@ -82,7 +82,7 @@ namespace AutoOpen
 
             foreach (EntityWrapper entity in entities)
             {
-                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door"))
+                if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door") && !doorBlacklist.Any(s => entity.Path.ToLower().Contains(s.ToLower())))
                 {
                     var entityPos = entity.Pos;
                     var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
