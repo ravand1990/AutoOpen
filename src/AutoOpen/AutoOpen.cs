@@ -11,6 +11,7 @@ using SharpDX;
 using SharpDX.Direct3D9;
 using System.Linq;
 using System.Threading;
+using System.IO;
 
 namespace AutoOpen
 {
@@ -20,7 +21,7 @@ namespace AutoOpen
         private Dictionary<long, int> clickedEntities = new Dictionary<long, int>();
         private List<EntityWrapper> entities = new List<EntityWrapper>();
         private Vector2 windowOffset = new Vector2();
-
+        private List<String> chestWhitelist;
 
         public AutoOpen()
         {
@@ -31,8 +32,9 @@ namespace AutoOpen
         {
             ingameState = GameController.Game.IngameState;
             windowOffset = GameController.Window.GetWindowRectangle().TopLeft;
+            loadChestWhitelist();
             base.Initialise();
-            
+
         }
 
         public override void Render()
@@ -88,7 +90,6 @@ namespace AutoOpen
             {
                 var entityPos = entity.Pos;
                 var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
-               
                 var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
 
                 //Doors
@@ -96,7 +97,6 @@ namespace AutoOpen
                 {
                     if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door") && !doorBlacklist.Any(s => entity.Path.ToLower().Contains(s.ToLower())))
                     {
-
                         bool isClosed = entity.GetComponent<TriggerableBlockage>().IsClosed;
 
                         string s = isClosed ? "closed" : "opened";
@@ -168,12 +168,35 @@ namespace AutoOpen
                 {
                     if (entity.Path.ToLower().Contains("chest"))
                     {
+
+                        bool isOpened = entity.GetComponent<Chest>().IsOpened;
+                        bool whitelisted = chestWhitelist.Contains(entity.Path);
+
+                        if (!isOpened && whitelisted )
+                        {
+                            Graphics.DrawText("Open me!", 12, entityScreenPos, Color.Red, FontDrawFlags.Center);
+                        }
+
+
+                        if (entity.GetComponent<Targetable>().isTargeted)
+                        {
+                            if (Keyboard.IsKeyPressed((int)Settings.chestWhitelistKey.Value))
+                            {
+                                toggleChestWhitelistItem(entity.Path);
+                            }
+                        }
+
+                        if (whitelisted && entityDistanceToPlayer <= Settings.chestDistance && !isOpened)
+                        {
+                            open(entityScreenPos, prevMousePosition);
+                        }
+
                     }
                 }
             }
         }
 
-        private void open(Vector2 entityScreenPos , Vector2 prevMousePosition)
+        private void open(Vector2 entityScreenPos, Vector2 prevMousePosition)
         {
             entityScreenPos += windowOffset;
             Mouse.moveMouse(entityScreenPos);
@@ -184,6 +207,36 @@ namespace AutoOpen
             Mouse.LeftDown(1);
             Thread.Sleep(Settings.Speed);
         }
+
+
+        private void loadChestWhitelist()
+        {
+            try { 
+            chestWhitelist = File.ReadAllLines(PluginDirectory + "\\chestWhitelist.txt").ToList();
+            }catch(Exception e)
+            {
+                File.Create(PluginDirectory + "\\chestWhitelist.txt");
+                loadChestWhitelist();
+            }
+        }
+
+        private void toggleChestWhitelistItem(String name)
+        {
+            if (chestWhitelist.Contains(name))
+            {
+                chestWhitelist.Remove(name);
+                LogMessage(name + " will now be ignored",5,Color.Red);
+            }
+            else
+            {
+                chestWhitelist.Add(name);
+                LogMessage(name + " will now be opened", 5, Color.Green);
+
+            }
+            File.WriteAllLines(PluginDirectory + "\\chestWhitelist.txt", chestWhitelist);
+        }
+
+
     }
 
     internal class Transitionable : PoeHUD.Poe.Component

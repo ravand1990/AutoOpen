@@ -1,0 +1,3 @@
+Metadata/Chests/Abyss/AbyssFinalChest3
+Metadata/Chests/Breach/BreachChest1Large
+Metadata/Chests/Breach/BreachChest1

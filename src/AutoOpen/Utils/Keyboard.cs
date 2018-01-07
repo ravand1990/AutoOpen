@@ -31,5 +31,14 @@ namespace AutoOpen.Utils
             HoldKey(key);
             ReleaseKey(key);
         }
+
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int nVirtKey);
+        const byte KEY_UP = 0x1;
+
+        public static bool IsKeyPressed(int key)
+        {
+            return (GetAsyncKeyState(key) & KEY_UP) == KEY_UP;
+        }
     }
 }

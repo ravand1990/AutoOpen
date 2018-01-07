@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using PoeHUD.Hud.Settings;
 using PoeHUD.Plugins;
+ 
 
 namespace AutoOpen
 {
@@ -20,7 +21,7 @@ namespace AutoOpen
             doorDistance = new RangeNode<int>(150, 0, 300);
             switchDistance = new RangeNode<int>(150, 0, 300);
             chestDistance = new RangeNode<int>(150, 0, 300);
-
+            chestWhitelistKey = new HotkeyNode(Keys.V);
         }
 
         [Menu("Speed")]
@@ -41,7 +42,10 @@ namespace AutoOpen
         [Menu("Chest", 3000)]
         public ToggleNode chests { get; set; }
 
-        [Menu("Distance", 3001, 3000)]
+        [Menu("Whitelist Key", 3001, 3000)]
+        public HotkeyNode chestWhitelistKey { get; set; }
+
+        [Menu("Distance", 3002, 3000)]
         public RangeNode<int> chestDistance { get; set; }
     }
 }
