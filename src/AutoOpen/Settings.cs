@@ -16,7 +16,7 @@ namespace AutoOpen
 
             doors = true;
             switches = true;
-            chests = false;
+            chests = true;
 
             doorDistance = new RangeNode<int>(150, 0, 300);
             switchDistance = new RangeNode<int>(150, 0, 300);
