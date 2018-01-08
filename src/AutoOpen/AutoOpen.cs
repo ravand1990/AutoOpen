@@ -106,17 +106,7 @@ namespace AutoOpen
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            int clickCount = 0;
-
-                            if (clickedEntities.ContainsKey(entity.Address))
-                            {
-                                clickCount = clickedEntities[entity.Address];
-                            }
-                            else
-                            {
-                                clickedEntities.Add(entity.Address, clickCount);
-                            }
-
+                            int clickCount = getEntityClickedCount(entity);
                             if (entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 25)
                             {
                                 open(entityScreenPos, prevMousePosition);
@@ -156,9 +146,15 @@ namespace AutoOpen
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            if (entityDistanceToPlayer <= Settings.switchDistance && !switched)
+                            int clickCount = getEntityClickedCount(entity);
+                            if (entityDistanceToPlayer <= Settings.switchDistance && !switched && clickCount <= 25)
                             {
                                 open(entityScreenPos, prevMousePosition);
+                                clickedEntities[entity.Address] = clickCount + 1;
+                            }
+                            else if (entityDistanceToPlayer >= Settings.switchDistance && !switched && clickCount >= 25)
+                            {
+                                clickedEntities.Clear();
                             }
                         }
                     }
@@ -172,7 +168,7 @@ namespace AutoOpen
                         bool isOpened = entity.GetComponent<Chest>().IsOpened;
                         bool whitelisted = chestWhitelist.Contains(entity.Path);
 
-                        if (!isOpened && whitelisted )
+                        if (!isOpened && whitelisted)
                         {
                             Graphics.DrawText("Open me!", 12, entityScreenPos, Color.Red, FontDrawFlags.Center);
                         }
@@ -186,14 +182,42 @@ namespace AutoOpen
                             }
                         }
 
-                        if (whitelisted && entityDistanceToPlayer <= Settings.chestDistance && !isOpened)
+                        if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            open(entityScreenPos, prevMousePosition);
-                        }
+                            int clickCount = getEntityClickedCount(entity);
 
+                            if (whitelisted && entityDistanceToPlayer <= Settings.chestDistance && !isOpened && clickCount <= 25)
+                            {
+                                open(entityScreenPos, prevMousePosition);
+                                clickedEntities[entity.Address] = clickCount + 1;
+                            }
+                            else if (whitelisted && entityDistanceToPlayer >= Settings.chestDistance && !isOpened && clickCount >= 25)
+                            {
+                                clickedEntities.Clear();
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        private int getEntityClickedCount(EntityWrapper entity)
+        {
+            int clickCount = 0;
+
+            if (clickedEntities.ContainsKey(entity.Address))
+            {
+                clickCount = clickedEntities[entity.Address];
+            }
+            else
+            {
+                clickedEntities.Add(entity.Address, clickCount);
+            }
+            if(clickCount >= 25)
+            {
+                LogMessage(entity.Path+" clicked too often!",3);
+            }
+            return clickCount;
         }
 
         private void open(Vector2 entityScreenPos, Vector2 prevMousePosition)
@@ -211,9 +235,11 @@ namespace AutoOpen
 
         private void loadChestWhitelist()
         {
-            try { 
-            chestWhitelist = File.ReadAllLines(PluginDirectory + "\\chestWhitelist.txt").ToList();
-            }catch(Exception e)
+            try
+            {
+                chestWhitelist = File.ReadAllLines(PluginDirectory + "\\chestWhitelist.txt").ToList();
+            }
+            catch (Exception e)
             {
                 File.Create(PluginDirectory + "\\chestWhitelist.txt");
                 loadChestWhitelist();
@@ -225,7 +251,7 @@ namespace AutoOpen
             if (chestWhitelist.Contains(name))
             {
                 chestWhitelist.Remove(name);
-                LogMessage(name + " will now be ignored",5,Color.Red);
+                LogMessage(name + " will now be ignored", 5, Color.Red);
             }
             else
             {
