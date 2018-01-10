@@ -49,7 +49,9 @@ namespace AutoOpen
             if (entity.HasComponent<Render>()
                 && (entity.HasComponent<TriggerableBlockage>()
                     || entity.HasComponent<Transitionable>()
-                    || entity.HasComponent<Chest>())
+                    || entity.HasComponent<Chest>()
+                    || entity.HasComponent<Shrine>()
+                    || entity.Path.ToLower().Contains("darkshrine"))
                 && entity.Address != GameController.Player.Address)
             {
                 entities.Add(entity);
@@ -181,7 +183,7 @@ namespace AutoOpen
 
                         if (isTargetable && !isOpened && whitelisted)
                         {
-                            Graphics.DrawText("Open me!", 12, entityScreenPos, Color.Red, FontDrawFlags.Center);
+                            Graphics.DrawText("Open me!", 12, entityScreenPos, Color.LimeGreen, FontDrawFlags.Center);
                         }
 
                         if (entity.GetComponent<Targetable>().isTargeted)
@@ -201,13 +203,44 @@ namespace AutoOpen
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
                             }
-                            else if (whitelisted && entityDistanceToPlayer >= Settings.chestDistance && !isOpened && clickCount >= 25)
+                            else if (isTargetable && whitelisted && entityDistanceToPlayer >= Settings.chestDistance && !isOpened && clickCount >= 25)
                             {
                                 clickedEntities.Clear();
                             }
                         }
                     }
                 }
+
+                //Shrines
+                if (Settings.shrines)
+                {
+                    if (entity.HasComponent<Shrine>() || entity.Path.ToLower().Contains("darkshrine"))
+                    {
+                        bool isOpened = entity.GetComponent<Chest>().IsOpened;
+                        bool whitelisted = chestWhitelist.Contains(entity.Path);
+
+                        if (isTargetable)
+                        {
+                            Graphics.DrawText("Get me!", 12, entityScreenPos, Color.LimeGreen, FontDrawFlags.Center);
+                        }
+
+                        if (Control.MouseButtons == MouseButtons.Left)
+                        {
+                            int clickCount = getEntityClickedCount(entity);
+
+                            if (isTargetable && entityDistanceToPlayer <= Settings.shrineDistance && clickCount <= 25)
+                            {
+                                open(entityScreenPos, prevMousePosition);
+                                clickedEntities[entity.Address] = clickCount + 1;
+                            }
+                            else if (isTargetable && entityDistanceToPlayer >= Settings.shrineDistance && clickCount >= 25)
+                            {
+                                clickedEntities.Clear();
+                            }
+                        }
+                    }
+                }
+
             }
         }
 

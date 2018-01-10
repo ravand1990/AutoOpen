@@ -6,4 +6,5 @@ Ignore:
 src
 .gitignore
 .gitattributes
+chestWhitelist.txt
 README.md
