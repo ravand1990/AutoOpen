@@ -46,9 +46,9 @@ namespace AutoOpen
         public override void EntityAdded(EntityWrapper entity)
         {
             base.EntityAdded(entity);
-            if (entity.HasComponent<Render>() 
-                && (entity.HasComponent<TriggerableBlockage>() 
-                    || entity.HasComponent<Transitionable>() 
+            if (entity.HasComponent<Render>()
+                && (entity.HasComponent<TriggerableBlockage>()
+                    || entity.HasComponent<Transitionable>()
                     || entity.HasComponent<Chest>())
                 && entity.Address != GameController.Player.Address)
             {

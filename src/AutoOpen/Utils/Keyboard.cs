@@ -18,12 +18,12 @@ namespace AutoOpen.Utils
 
         public static void HoldKey(byte key)
         {
-            keybd_event(key, 0, (int) KeyboardEvents.KEY_DOWN, 0);
+            keybd_event(key, 0, (int)KeyboardEvents.KEY_DOWN, 0);
         }
 
         public static void ReleaseKey(byte key)
         {
-            keybd_event(key, 0, (int) KeyboardEvents.KEY_DOWN | (int) KeyboardEvents.KEY_UP, 0);
+            keybd_event(key, 0, (int)KeyboardEvents.KEY_DOWN | (int)KeyboardEvents.KEY_UP, 0);
         }
 
         public static void PressKey(byte key)
@@ -38,7 +38,7 @@ namespace AutoOpen.Utils
 
         public static bool IsKeyPressed(int key)
         {
-            return (GetAsyncKeyState(key) & KEY_UP) == KEY_UP;
+            return GetAsyncKeyState(key) == -32767;
         }
     }
 }
