@@ -43,10 +43,17 @@ namespace AutoOpen
             open();
         }
 
-        public override void EntityAdded(EntityWrapper entityWrapper)
+        public override void EntityAdded(EntityWrapper entity)
         {
-            base.EntityAdded(entityWrapper);
-            entities.Add(entityWrapper);
+            base.EntityAdded(entity);
+            if (entity.HasComponent<Render>() 
+                && (entity.HasComponent<TriggerableBlockage>() 
+                    || entity.HasComponent<Transitionable>() 
+                    || entity.HasComponent<Chest>())
+                && entity.Address != GameController.Player.Address)
+            {
+                entities.Add(entity);
+            }
         }
 
         public override void EntityRemoved(EntityWrapper entityWrapper)
@@ -164,7 +171,6 @@ namespace AutoOpen
                 {
                     if (entity.Path.ToLower().Contains("chest"))
                     {
-
                         bool isOpened = entity.GetComponent<Chest>().IsOpened;
                         bool whitelisted = chestWhitelist.Contains(entity.Path);
 
@@ -172,7 +178,6 @@ namespace AutoOpen
                         {
                             Graphics.DrawText("Open me!", 12, entityScreenPos, Color.Red, FontDrawFlags.Center);
                         }
-
 
                         if (entity.GetComponent<Targetable>().isTargeted)
                         {
@@ -213,9 +218,9 @@ namespace AutoOpen
             {
                 clickedEntities.Add(entity.Address, clickCount);
             }
-            if(clickCount >= 25)
+            if (clickCount >= 25)
             {
-                LogMessage(entity.Path+" clicked too often!",3);
+                LogMessage(entity.Path + " clicked too often!", 3);
             }
             return clickCount;
         }
@@ -257,7 +262,6 @@ namespace AutoOpen
             {
                 chestWhitelist.Add(name);
                 LogMessage(name + " will now be opened", 5, Color.Green);
-
             }
             File.WriteAllLines(PluginDirectory + "\\chestWhitelist.txt", chestWhitelist);
         }
