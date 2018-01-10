@@ -1,5 +1,9 @@
+Metadata/Chests/Abyss/AbyssFinalChest
 Metadata/Chests/Abyss/AbyssFinalChest1
 Metadata/Chests/Abyss/AbyssFinalChest2
 Metadata/Chests/Abyss/AbyssFinalChest3
 Metadata/Chests/Breach/BreachChest1Large
 Metadata/Chests/Breach/BreachChest1
+Metadata/Terrain/Labyrinth/Objects/GoldenChest
+Metadata/Chests/Labyrinth/LabyrinthTreasureKey
+Metadata/Terrain/Labyrinth/Objects/SilverChest

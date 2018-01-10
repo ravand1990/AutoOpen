@@ -93,11 +93,14 @@ namespace AutoOpen
             var playerPos = GameController.Player.Pos;
             var prevMousePosition = Mouse.GetCursorPosition();
 
+
             foreach (EntityWrapper entity in entities)
             {
                 var entityPos = entity.Pos;
                 var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
                 var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
+                bool isTargetable = Memory.ReadByte(entity.GetComponent<Targetable>().Address + 0x28) == 1;
+
 
                 //Doors
                 if (Settings.doors)
@@ -167,6 +170,7 @@ namespace AutoOpen
                     }
                 }
 
+                //Chests
                 if (Settings.chests)
                 {
                     if (entity.Path.ToLower().Contains("chest"))
@@ -174,7 +178,8 @@ namespace AutoOpen
                         bool isOpened = entity.GetComponent<Chest>().IsOpened;
                         bool whitelisted = chestWhitelist.Contains(entity.Path);
 
-                        if (!isOpened && whitelisted)
+
+                        if (isTargetable && !isOpened && whitelisted)
                         {
                             Graphics.DrawText("Open me!", 12, entityScreenPos, Color.Red, FontDrawFlags.Center);
                         }
@@ -191,7 +196,7 @@ namespace AutoOpen
                         {
                             int clickCount = getEntityClickedCount(entity);
 
-                            if (whitelisted && entityDistanceToPlayer <= Settings.chestDistance && !isOpened && clickCount <= 25)
+                            if (isTargetable && whitelisted && entityDistanceToPlayer <= Settings.chestDistance && !isOpened && clickCount <= 25)
                             {
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
