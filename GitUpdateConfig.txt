@@ -7,4 +7,6 @@ src
 .gitignore
 .gitattributes
 chestWhitelist.txt
+switchBlacklist.txt
+doorBlacklist.txt
 README.md

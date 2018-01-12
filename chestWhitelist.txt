@@ -4,6 +4,9 @@ Metadata/Chests/Abyss/AbyssFinalChest2
 Metadata/Chests/Abyss/AbyssFinalChest3
 Metadata/Chests/Breach/BreachChest1Large
 Metadata/Chests/Breach/BreachChest1
-Metadata/Terrain/Labyrinth/Objects/GoldenChest
 Metadata/Chests/Labyrinth/LabyrinthTreasureKey
 Metadata/Terrain/Labyrinth/Objects/SilverChest
+Metadata/Chests/AbyssChest01
+Metadata/Terrain/Labyrinth/Objects/GoldenChest
+Metadata/Chests/Labyrinth/LabyrinthRewardDangerSkillGems
+Metadata/Chests/Labyrinth/LabyrinthRewardDangerJewelry

@@ -22,12 +22,14 @@ namespace AutoOpen
             doorDistance = new RangeNode<int>(150, 0, 300);
             switchDistance = new RangeNode<int>(150, 0, 300);
             chestDistance = new RangeNode<int>(150, 0, 300);
+            toggleEntityKey = new HotkeyNode(Keys.V);
             shrineDistance = new RangeNode<int>(150, 0, 300);
-
-            chestWhitelistKey = new HotkeyNode(Keys.V);
         }
 
-        [Menu("Speed")]
+        [Menu("Blacklist|Whitelist Key")]
+        public HotkeyNode toggleEntityKey { get; set; }
+
+        [Menu("Click Delay")]
         public RangeNode<int> Speed { get; set; }
 
         [Menu("Doors", 1000)]
@@ -45,9 +47,6 @@ namespace AutoOpen
         [Menu("Chests", 3000)]
         public ToggleNode chests { get; set; }
 
-        [Menu("Whitelist Key", 3001, 3000)]
-        public HotkeyNode chestWhitelistKey { get; set; }
-
         [Menu("Distance", 3002, 3000)]
         public RangeNode<int> chestDistance { get; set; }
 
@@ -56,6 +55,5 @@ namespace AutoOpen
 
         [Menu("Distance", 4001, 4000)]
         public RangeNode<int> shrineDistance { get; set; }
-
     }
 }

@@ -21,7 +21,10 @@ namespace AutoOpen
         private Dictionary<long, int> clickedEntities = new Dictionary<long, int>();
         private List<EntityWrapper> entities = new List<EntityWrapper>();
         private Vector2 windowOffset = new Vector2();
+        private List<String> doorBlacklist;
+        private List<String> switchBlacklist;
         private List<String> chestWhitelist;
+
 
         public AutoOpen()
         {
@@ -32,6 +35,8 @@ namespace AutoOpen
         {
             ingameState = GameController.Game.IngameState;
             windowOffset = GameController.Window.GetWindowRectangle().TopLeft;
+            loadDoorBlacklist();
+            loadSwitchBlacklist();
             loadChestWhitelist();
             base.Initialise();
 
@@ -69,26 +74,6 @@ namespace AutoOpen
             base.OnClose();
         }
 
-        List<string> doorBlacklist = new List<string>
-        {
-            "LabyrinthAirlockDoor",
-            "HiddenDoor_Short",
-            "HiddenDoor",
-            "LabyrinthIzaroArenaDoor",
-            "Door_Closed",
-            "Door_Open",
-            "Door_Toggle_Closed",
-            "Door_Toggle_Open",
-            "SilverDoor",
-            "GoldenDoor",
-            "lock",
-            "close",
-            "open",
-            "hidden"
-        };
-
-
-
         private void open()
         {
             var camera = ingameState.Camera;
@@ -102,14 +87,24 @@ namespace AutoOpen
                 var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
                 var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
                 bool isTargetable = Memory.ReadByte(entity.GetComponent<Targetable>().Address + 0x28) == 1;
-
+                bool isTargeted = entity.GetComponent<Targetable>().isTargeted;
 
                 //Doors
                 if (Settings.doors)
                 {
-                    if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door") && !doorBlacklist.Any(s => entity.Path.ToLower().Contains(s.ToLower())))
+                    bool isBlacklisted = doorBlacklist != null && doorBlacklist.Contains(entity.Path);
+
+                    if (!isBlacklisted && entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door"))
                     {
                         bool isClosed = entity.GetComponent<TriggerableBlockage>().IsClosed;
+
+                        if (isTargeted)
+                        {
+                            if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
+                            {
+                                toggleDoorBlacklistItem(entity.Path);
+                            }
+                        }
 
                         string s = isClosed ? "closed" : "opened";
                         Color c = isClosed ? Color.Red : Color.Green;
@@ -135,12 +130,20 @@ namespace AutoOpen
                 //Switches
                 if (Settings.switches)
                 {
-                    if (entity.HasComponent<Transitionable>() && entity.HasComponent<Targetable>() && !entity.HasComponent<TriggerableBlockage>() && entity.Path.ToLower().Contains("switch"))
-                    {
-                        bool isTargeted = entity.GetComponent<Targetable>().isTargeted;
+                    bool isBlacklisted = switchBlacklist != null && switchBlacklist.Contains(entity.Path);
 
+                    if (!isBlacklisted && entity.HasComponent<Transitionable>() && entity.HasComponent<Targetable>() && !entity.HasComponent<TriggerableBlockage>() && entity.Path.ToLower().Contains("switch"))
+                    {
                         var switchState = entity.InternalEntity.GetComponent<Transitionable>().switchState;
                         bool switched = switchState != 1;
+
+                        if (isTargeted)
+                        {
+                            if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
+                            {
+                                toggleSwitchBlacklistItem(entity.Path);
+                            }
+                        }
 
                         int count = 1;
 
@@ -175,10 +178,10 @@ namespace AutoOpen
                 //Chests
                 if (Settings.chests)
                 {
-                    if (entity.Path.ToLower().Contains("chest"))
+                    if (entity.HasComponent<Chest>() || entity.Path.ToLower().Contains("chest"))
                     {
                         bool isOpened = entity.GetComponent<Chest>().IsOpened;
-                        bool whitelisted = chestWhitelist.Contains(entity.Path);
+                        bool whitelisted = chestWhitelist != null && chestWhitelist.Contains(entity.Path);
 
 
                         if (isTargetable && !isOpened && whitelisted)
@@ -186,9 +189,9 @@ namespace AutoOpen
                             Graphics.DrawText("Open me!", 12, entityScreenPos, Color.LimeGreen, FontDrawFlags.Center);
                         }
 
-                        if (entity.GetComponent<Targetable>().isTargeted)
+                        if (isTargeted)
                         {
-                            if (Keyboard.IsKeyPressed((int)Settings.chestWhitelistKey.Value))
+                            if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
                             {
                                 toggleChestWhitelistItem(entity.Path);
                             }
@@ -240,7 +243,6 @@ namespace AutoOpen
                         }
                     }
                 }
-
             }
         }
 
@@ -276,6 +278,33 @@ namespace AutoOpen
         }
 
 
+
+        private void loadDoorBlacklist()
+        {
+            try
+            {
+                doorBlacklist = File.ReadAllLines(PluginDirectory + "\\doorBlacklist.txt").ToList();
+            }
+            catch (Exception e)
+            {
+                File.Create(PluginDirectory + "\\doorBlacklist.txt");
+                loadDoorBlacklist();
+            }
+        }
+
+        private void loadSwitchBlacklist()
+        {
+            try
+            {
+                switchBlacklist = File.ReadAllLines(PluginDirectory + "\\switchBlacklist.txt").ToList();
+            }
+            catch (Exception e)
+            {
+                File.Create(PluginDirectory + "\\switchBlacklist.txt");
+                loadSwitchBlacklist();
+            }
+        }
+
         private void loadChestWhitelist()
         {
             try
@@ -287,6 +316,38 @@ namespace AutoOpen
                 File.Create(PluginDirectory + "\\chestWhitelist.txt");
                 loadChestWhitelist();
             }
+        }
+
+
+
+        private void toggleDoorBlacklistItem(String name)
+        {
+            if (chestWhitelist.Contains(name))
+            {
+                doorBlacklist.Remove(name);
+                LogMessage(name + " will now be opened", 5, Color.Green);
+            }
+            else
+            {
+                doorBlacklist.Add(name);
+                LogMessage(name + " will now be ignored", 5, Color.Red);
+            }
+            File.WriteAllLines(PluginDirectory + "\\doorBlacklist.txt", doorBlacklist);
+        }
+
+        private void toggleSwitchBlacklistItem(String name)
+        {
+            if (chestWhitelist.Contains(name))
+            {
+                switchBlacklist.Remove(name);
+                LogMessage(name + " will now be opened", 5, Color.Green);
+            }
+            else
+            {
+                switchBlacklist.Add(name);
+                LogMessage(name + " will now be ignored", 5, Color.Red);
+            }
+            File.WriteAllLines(PluginDirectory + "\\switchBlacklist.txt", switchBlacklist);
         }
 
         private void toggleChestWhitelistItem(String name)
