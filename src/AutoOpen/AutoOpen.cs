@@ -94,32 +94,35 @@ namespace AutoOpen
                 {
                     bool isBlacklisted = doorBlacklist != null && doorBlacklist.Contains(entity.Path);
 
-                    if (isTargeted)
-                    {
-                        if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
-                        {
-                            toggleDoorBlacklistItem(entity.Path);
-                        }
-                    }
-
-                    if (!isBlacklisted && entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door"))
+                    if (entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door"))
                     {
                         bool isClosed = entity.GetComponent<TriggerableBlockage>().IsClosed;
 
                         string s = isClosed ? "closed" : "opened";
                         Color c = isClosed ? Color.Red : Color.Green;
 
-                        Graphics.DrawText(s, 16, entityScreenPos, c, FontDrawFlags.Center);
+                        if (!isBlacklisted)
+                        {
+                            Graphics.DrawText(s, 16, entityScreenPos, c, FontDrawFlags.Center);
+                        }
+
+                        if (isTargeted)
+                        {
+                            if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
+                            {
+                                toggleDoorBlacklistItem(entity.Path);
+                            }
+                        }
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
                             int clickCount = getEntityClickedCount(entity);
-                            if (entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 25)
+                            if (!isBlacklisted && entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 25)
                             {
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
                             }
-                            else if (entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 25)
+                            else if (!isBlacklisted && entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 25)
                             {
                                 clickedEntities.Clear();
                             }
@@ -132,42 +135,44 @@ namespace AutoOpen
                 {
                     bool isBlacklisted = switchBlacklist != null && switchBlacklist.Contains(entity.Path);
 
-                    if (isTargeted)
-                    {
-                        if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
-                        {
-                            toggleSwitchBlacklistItem(entity.Path);
-                        }
-                    }
-
-                    if (!isBlacklisted && entity.HasComponent<Transitionable>() && entity.HasComponent<Targetable>() && !entity.HasComponent<TriggerableBlockage>() && entity.Path.ToLower().Contains("switch"))
+                    if (entity.HasComponent<Transitionable>() && entity.HasComponent<Targetable>() && !entity.HasComponent<TriggerableBlockage>() && entity.Path.ToLower().Contains("switch"))
                     {
                         var switchState = entity.InternalEntity.GetComponent<Transitionable>().switchState;
                         bool switched = switchState != 1;
 
-                        int count = 1;
+
 
                         string s = isTargeted ? "targeted" : "not targeted";
                         Color c = isTargeted ? Color.Green : Color.Red;
 
-                        Graphics.DrawText(s, 20, entityScreenPos.Translate(0, count * 16), c, FontDrawFlags.Center);
-                        count++;
+                        if (!isBlacklisted)
+                        {
+                            int count = 1;
+                            Graphics.DrawText(s, 20, entityScreenPos.Translate(0, count * 16), c, FontDrawFlags.Center);
+                            count++;
+                            string s2 = switched ? "switched" : "not switched";
+                            Color c2 = switched ? Color.Green : Color.Red;
+                            Graphics.DrawText(s2 + ":" + switchState, 20, entityScreenPos.Translate(0, count * 16), c2, FontDrawFlags.Center);
+                            count++;
+                        }
 
-                        string s2 = switched ? "switched" : "not switched";
-                        Color c2 = switched ? Color.Green : Color.Red;
-
-                        Graphics.DrawText(s2 + ":" + switchState, 20, entityScreenPos.Translate(0, count * 16), c2, FontDrawFlags.Center);
-                        count++;
+                        if (isTargeted)
+                        {
+                            if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
+                            {
+                                toggleSwitchBlacklistItem(entity.Path);
+                            }
+                        }
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
                             int clickCount = getEntityClickedCount(entity);
-                            if (entityDistanceToPlayer <= Settings.switchDistance && !switched && clickCount <= 25)
+                            if (!isBlacklisted && entityDistanceToPlayer <= Settings.switchDistance && !switched && clickCount <= 25)
                             {
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
                             }
-                            else if (entityDistanceToPlayer >= Settings.switchDistance && !switched && clickCount >= 25)
+                            else if (!isBlacklisted && entityDistanceToPlayer >= Settings.switchDistance && !switched && clickCount >= 25)
                             {
                                 clickedEntities.Clear();
                             }
@@ -327,7 +332,7 @@ namespace AutoOpen
                 doorBlacklist.Remove(name);
                 LogMessage(name + " will now be opened", 5, Color.Green);
             }
-            else if(doorBlacklist.Contains(name))
+            else
             {
                 doorBlacklist.Add(name);
                 LogMessage(name + " will now be ignored", 5, Color.Red);
