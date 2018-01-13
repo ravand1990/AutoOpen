@@ -94,17 +94,17 @@ namespace AutoOpen
                 {
                     bool isBlacklisted = doorBlacklist != null && doorBlacklist.Contains(entity.Path);
 
+                    if (isTargeted)
+                    {
+                        if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
+                        {
+                            toggleDoorBlacklistItem(entity.Path);
+                        }
+                    }
+
                     if (!isBlacklisted && entity.HasComponent<TriggerableBlockage>() && entity.HasComponent<Targetable>() && entity.Path.ToLower().Contains("door"))
                     {
                         bool isClosed = entity.GetComponent<TriggerableBlockage>().IsClosed;
-
-                        if (isTargeted)
-                        {
-                            if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
-                            {
-                                toggleDoorBlacklistItem(entity.Path);
-                            }
-                        }
 
                         string s = isClosed ? "closed" : "opened";
                         Color c = isClosed ? Color.Red : Color.Green;
@@ -132,18 +132,18 @@ namespace AutoOpen
                 {
                     bool isBlacklisted = switchBlacklist != null && switchBlacklist.Contains(entity.Path);
 
+                    if (isTargeted)
+                    {
+                        if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
+                        {
+                            toggleSwitchBlacklistItem(entity.Path);
+                        }
+                    }
+
                     if (!isBlacklisted && entity.HasComponent<Transitionable>() && entity.HasComponent<Targetable>() && !entity.HasComponent<TriggerableBlockage>() && entity.Path.ToLower().Contains("switch"))
                     {
                         var switchState = entity.InternalEntity.GetComponent<Transitionable>().switchState;
                         bool switched = switchState != 1;
-
-                        if (isTargeted)
-                        {
-                            if (Keyboard.IsKeyPressed((int)Settings.toggleEntityKey.Value))
-                            {
-                                toggleSwitchBlacklistItem(entity.Path);
-                            }
-                        }
 
                         int count = 1;
 
@@ -322,12 +322,12 @@ namespace AutoOpen
 
         private void toggleDoorBlacklistItem(String name)
         {
-            if (chestWhitelist.Contains(name))
+            if (doorBlacklist.Contains(name))
             {
                 doorBlacklist.Remove(name);
                 LogMessage(name + " will now be opened", 5, Color.Green);
             }
-            else
+            else if(doorBlacklist.Contains(name))
             {
                 doorBlacklist.Add(name);
                 LogMessage(name + " will now be ignored", 5, Color.Red);
@@ -337,7 +337,7 @@ namespace AutoOpen
 
         private void toggleSwitchBlacklistItem(String name)
         {
-            if (chestWhitelist.Contains(name))
+            if (switchBlacklist.Contains(name))
             {
                 switchBlacklist.Remove(name);
                 LogMessage(name + " will now be opened", 5, Color.Green);
