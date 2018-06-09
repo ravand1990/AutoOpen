@@ -190,9 +190,6 @@ namespace AutoOpen
                         bool isOpened = entity.GetComponent<Chest>().IsOpened;
                         bool whitelisted = chestWhitelist != null && chestWhitelist.Contains(entity.Path);
 
-                        Graphics.DrawText(isTargeted.ToString(), 12, entityScreenPos, Color.LimeGreen, FontDrawFlags.Center);
-
-
                         if (isTargetable && !isOpened && whitelisted)
                         {
                             Graphics.DrawText("Open me!", 12, entityScreenPos, Color.LimeGreen, FontDrawFlags.Center);
