@@ -86,8 +86,10 @@ namespace AutoOpen
                 var entityPos = entity.Pos;
                 var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0), entity);
                 var entityDistanceToPlayer = Math.Sqrt(Math.Pow(playerPos.X - entityPos.X, 2) + Math.Pow(playerPos.Y - entityPos.Y, 2));
-                bool isTargetable = Memory.ReadByte(entity.GetComponent<Targetable>().Address + 0x28) == 1;
-                bool isTargeted = entity.GetComponent<Targetable>().isTargeted;
+                bool isTargetable = Memory.ReadByte(entity.GetComponent<Targetable>().Address + 0x30) == 1;
+                bool isTargeted = Memory.ReadByte(entity.GetComponent<Targetable>().Address + 0x32) == 1;
+
+                //bool isTargeted = entity.GetComponent<Targetable>().isTargeted;
 
                 //Doors
                 if (Settings.doors)
@@ -187,6 +189,8 @@ namespace AutoOpen
                     {
                         bool isOpened = entity.GetComponent<Chest>().IsOpened;
                         bool whitelisted = chestWhitelist != null && chestWhitelist.Contains(entity.Path);
+
+                        Graphics.DrawText(isTargeted.ToString(), 12, entityScreenPos, Color.LimeGreen, FontDrawFlags.Center);
 
 
                         if (isTargetable && !isOpened && whitelisted)
