@@ -291,7 +291,7 @@ namespace AutoOpen
             {
                 doorBlacklist = File.ReadAllLines(PluginDirectory + "\\doorBlacklist.txt").ToList();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 File.Create(PluginDirectory + "\\doorBlacklist.txt");
                 loadDoorBlacklist();
@@ -304,7 +304,7 @@ namespace AutoOpen
             {
                 switchBlacklist = File.ReadAllLines(PluginDirectory + "\\switchBlacklist.txt").ToList();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 File.Create(PluginDirectory + "\\switchBlacklist.txt");
                 loadSwitchBlacklist();
@@ -317,7 +317,7 @@ namespace AutoOpen
             {
                 chestWhitelist = File.ReadAllLines(PluginDirectory + "\\chestWhitelist.txt").ToList();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 File.Create(PluginDirectory + "\\chestWhitelist.txt");
                 loadChestWhitelist();
