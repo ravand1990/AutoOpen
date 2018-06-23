@@ -38,6 +38,9 @@ namespace AutoOpen.Utils
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
+        [DllImport("user32.dll")]
+        private static extern bool BlockInput(bool block);
+
 
         public static void moveMouse(Vector2 pos)
         {
@@ -67,6 +70,11 @@ namespace AutoOpen.Utils
         {
             mouse_event((int) MouseEvents.RightUp, 0, 0, 0, 0);
             Thread.Sleep(DELAY_CLICK + delay);
+        }
+
+        public static void blockInput(bool block)
+        {
+            BlockInput(block);
         }
     }
 }

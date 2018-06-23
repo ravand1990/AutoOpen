@@ -13,6 +13,7 @@ namespace AutoOpen
         {
             Enable = true;
             Speed = new RangeNode<int>(1, 0, 100);
+            BlockInput = true;
 
             doors = true;
             switches = true;
@@ -28,6 +29,9 @@ namespace AutoOpen
 
         [Menu("Blacklist|Whitelist Key")]
         public HotkeyNode toggleEntityKey { get; set; }
+
+        [Menu("Block User Input")]
+        public ToggleNode BlockInput { get; set; }
 
         [Menu("Click Delay")]
         public RangeNode<int> Speed { get; set; }

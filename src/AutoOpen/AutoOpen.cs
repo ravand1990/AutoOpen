@@ -123,11 +123,16 @@ namespace AutoOpen
                             {
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
+                                if (Settings.BlockInput) Mouse.blockInput(true);
                             }
                             else if (!isBlacklisted && entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 25)
                             {
                                 clickedEntities.Clear();
                             }
+                        
+                            if (Settings.BlockInput) Mouse.blockInput(false);
+
+
                         }
                     }
                 }
@@ -173,11 +178,13 @@ namespace AutoOpen
                             {
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
+                                if (Settings.BlockInput) Mouse.blockInput(true);
                             }
                             else if (!isBlacklisted && entityDistanceToPlayer >= Settings.switchDistance && !switched && clickCount >= 25)
                             {
                                 clickedEntities.Clear();
                             }
+                            if (Settings.BlockInput) Mouse.blockInput(false);
                         }
                     }
                 }
@@ -211,11 +218,13 @@ namespace AutoOpen
                             {
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
+                                if (Settings.BlockInput) Mouse.blockInput(true);
                             }
                             else if (isTargetable && whitelisted && entityDistanceToPlayer >= Settings.chestDistance && !isOpened && clickCount >= 25)
                             {
                                 clickedEntities.Clear();
                             }
+                            if (Settings.BlockInput) Mouse.blockInput(false);
                         }
                     }
                 }
@@ -241,11 +250,13 @@ namespace AutoOpen
                             {
                                 open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
+                                if (Settings.BlockInput) Mouse.blockInput(true);
                             }
                             else if (isTargetable && entityDistanceToPlayer >= Settings.shrineDistance && clickCount >= 25)
                             {
                                 clickedEntities.Clear();
                             }
+                            if (Settings.BlockInput) Mouse.blockInput(false);
                         }
                     }
                 }
@@ -275,11 +286,11 @@ namespace AutoOpen
         {
             entityScreenPos += windowOffset;
             Mouse.moveMouse(entityScreenPos);
-            Mouse.LeftUp(1);
-            Mouse.LeftDown(1);
-            Mouse.LeftUp(1);
+            Mouse.LeftUp(0);
+            Mouse.LeftDown(0);
+            Mouse.LeftUp(0);
             Mouse.moveMouse(prevMousePosition);
-            Mouse.LeftDown(1);
+            Mouse.LeftDown(0);
             Thread.Sleep(Settings.Speed);
         }
 
