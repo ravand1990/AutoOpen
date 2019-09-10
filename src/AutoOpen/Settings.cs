@@ -1,24 +1,23 @@
-﻿using System.Reflection;
-using System.Windows.Forms;
-using PoeHUD.Hud.Settings;
-using PoeHUD.Plugins;
- 
+﻿using System.Windows.Forms;
+using Shared.Attributes;
+using Shared.Interfaces;
+using Shared.Nodes;
 
 namespace AutoOpen
 {
-    internal class Settings : SettingsBase
+    public class Settings : ISettings
     {
 
         public Settings()
         {
-            Enable = true;
+            Enable = new ToggleNode(true);
             Speed = new RangeNode<int>(1, 0, 100);
-            BlockInput = true;
+            BlockInput = new ToggleNode(true);
 
-            doors = true;
-            switches = true;
-            chests = true;
-            shrines = true;
+            doors = new ToggleNode(true);
+            switches = new ToggleNode(true);
+            chests = new ToggleNode(true);
+            shrines = new ToggleNode(true);
 
             doorDistance = new RangeNode<int>(150, 0, 300);
             switchDistance = new RangeNode<int>(150, 0, 300);
@@ -26,6 +25,9 @@ namespace AutoOpen
             toggleEntityKey = new HotkeyNode(Keys.V);
             shrineDistance = new RangeNode<int>(150, 0, 300);
         }
+
+        [Menu("Enable")]
+        public ToggleNode Enable { get; set; }
 
         [Menu("Blacklist|Whitelist Key")]
         public HotkeyNode toggleEntityKey { get; set; }
