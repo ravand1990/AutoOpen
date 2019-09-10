@@ -239,7 +239,7 @@ namespace AutoOpen
                     {
                         if (entity.HasComponent<Shrine>() || entity.Path.ToLower().Contains("darkshrine"))
                         {
-                            bool isOpened = entity.GetComponent<Chest>().IsOpened;
+                            bool isAvailable = entity.GetComponent<Shrine>().IsAvailable;
                             bool whitelisted = chestWhitelist.Contains(entity.Path);
 
                             if (isTargetable)
