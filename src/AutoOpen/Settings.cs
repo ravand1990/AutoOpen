@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
-using Shared.Attributes;
-using Shared.Interfaces;
-using Shared.Nodes;
+using ExileCore.Shared.Attributes;
+using ExileCore.Shared.Interfaces;
+using ExileCore.Shared.Nodes;
 
 namespace AutoOpen
 {

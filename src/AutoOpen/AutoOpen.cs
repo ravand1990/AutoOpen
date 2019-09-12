@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Exile;
-using PoEMemory;
-using PoEMemory.Components;
-using PoEMemory.InventoryElements;
-using Shared.Enums;
+using ExileCore;
+using ExileCore.PoEMemory.Components;
+using ExileCore.Shared.Enums;
 using SharpDX;
 using AutoOpen.Utils;
-using Exile.PoEMemory.MemoryObjects;
-using Shared.Helpers;
+using ExileCore.Shared.Helpers;
 using System.IO;
+using ExileCore.PoEMemory.MemoryObjects;
 
 namespace AutoOpen
 {

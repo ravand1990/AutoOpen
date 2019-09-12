@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Core">
-      <HintPath>..\..\..\..\..\Core.dll</HintPath>
+    <Reference Include="ExileCore">
+      <HintPath>..\..\..\..\..\ExileCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">

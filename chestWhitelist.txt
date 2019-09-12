@@ -47,4 +47,15 @@ Metadata/Chests/DelveChests/PathGeneric
 Metadata/Chests/DelveChests/PathWeapon
 Metadata/Chests/DelveChests/Resonator1
 Metadata/Chests/DelveChests/PathTrinkets
-Metadata/Chests/GoldPot4v2
+Metadata/Chests/Barrel5old
+Metadata/Chests/StrongBoxes/Strongbox
+Metadata/Chests/StrongBoxes/Armory
+Metadata/Chests/Chest8
+Metadata/Chests/Basket2old
+Metadata/Chests/Barrel2old
+Metadata/Chests/Basket1old
+Metadata/Chests/Barrel3old
+Metadata/Chests/Pot4v1
+Metadata/Chests/GoldPot2v2
+Metadata/Chests/Barrel4old
+Metadata/Chests/CaveBoulder2
