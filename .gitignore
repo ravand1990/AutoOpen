@@ -289,3 +289,4 @@ SharpDX.Desktop.dll
 PoeHUD.exe.config
 Newtonsoft.Json.xml
 /AutoOpen.dll.config
+/AutoOpen.dll
