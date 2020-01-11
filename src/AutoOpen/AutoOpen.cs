@@ -83,7 +83,9 @@ namespace AutoOpen
 
             foreach (Entity entity in entities)
             {
-                if (entity.HasComponent<Targetable>())
+                if (entity.HasComponent<Targetable>() &&
+                    entity.IsValid &&
+                    entity.IsTargetable)
                 {
                     var entityPos = entity.Pos;
                     var entityScreenPos = camera.WorldToScreen(entityPos.Translate(0, 0, 0));
@@ -124,13 +126,13 @@ namespace AutoOpen
                             if (Control.MouseButtons == MouseButtons.Left)
                             {
                                 int clickCount = getEntityClickedCount(entity);
-                                if (!isBlacklisted && entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 25)
+                                if (!isBlacklisted && entityDistanceToPlayer <= Settings.doorDistance && isClosed && clickCount <= 15)
                                 {
                                     open(entityScreenPos, prevMousePosition);
                                     clickedEntities[entity.Address] = clickCount + 1;
                                     if (Settings.BlockInput) Mouse.blockInput(true);
                                 }
-                                else if (!isBlacklisted && entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 25)
+                                else if (!isBlacklisted && entityDistanceToPlayer >= Settings.doorDistance && isClosed && clickCount >= 15)
                                 {
                                     clickedEntities.Clear();
                                 }
@@ -177,13 +179,13 @@ namespace AutoOpen
                             if (Control.MouseButtons == MouseButtons.Left)
                             {
                                 int clickCount = getEntityClickedCount(entity);
-                                if (!isBlacklisted && entityDistanceToPlayer <= Settings.switchDistance && !switched && clickCount <= 25)
+                                if (!isBlacklisted && entityDistanceToPlayer <= Settings.switchDistance && !switched && clickCount <= 15)
                                 {
                                     open(entityScreenPos, prevMousePosition);
                                     clickedEntities[entity.Address] = clickCount + 1;
                                     if (Settings.BlockInput) Mouse.blockInput(true);
                                 }
-                                else if (!isBlacklisted && entityDistanceToPlayer >= Settings.switchDistance && !switched && clickCount >= 25)
+                                else if (!isBlacklisted && entityDistanceToPlayer >= Settings.switchDistance && !switched && clickCount >= 15)
                                 {
                                     clickedEntities.Clear();
                                 }
@@ -217,13 +219,13 @@ namespace AutoOpen
                             {
                                 int clickCount = getEntityClickedCount(entity);
 
-                                if (isTargetable && whitelisted && entityDistanceToPlayer <= Settings.chestDistance && !isOpened && clickCount <= 25)
+                                if (isTargetable && whitelisted && entityDistanceToPlayer <= Settings.chestDistance && !isOpened && clickCount <= 15)
                                 {
                                     open(entityScreenPos, prevMousePosition);
                                     clickedEntities[entity.Address] = clickCount + 1;
                                     if (Settings.BlockInput) Mouse.blockInput(true);
                                 }
-                                else if (isTargetable && whitelisted && entityDistanceToPlayer >= Settings.chestDistance && !isOpened && clickCount >= 25)
+                                else if (isTargetable && whitelisted && entityDistanceToPlayer >= Settings.chestDistance && !isOpened && clickCount >= 15)
                                 {
                                     clickedEntities.Clear();
                                 }
@@ -249,13 +251,13 @@ namespace AutoOpen
                             {
                                 int clickCount = getEntityClickedCount(entity);
 
-                                if (isTargetable && entityDistanceToPlayer <= Settings.shrineDistance && clickCount <= 25)
+                                if (isTargetable && entityDistanceToPlayer <= Settings.shrineDistance && clickCount <= 15)
                                 {
                                     open(entityScreenPos, prevMousePosition);
                                     clickedEntities[entity.Address] = clickCount + 1;
                                     if (Settings.BlockInput) Mouse.blockInput(true);
                                 }
-                                else if (isTargetable && entityDistanceToPlayer >= Settings.shrineDistance && clickCount >= 25)
+                                else if (isTargetable && entityDistanceToPlayer >= Settings.shrineDistance && clickCount >= 15)
                                 {
                                     clickedEntities.Clear();
                                 }
@@ -279,7 +281,7 @@ namespace AutoOpen
             {
                 clickedEntities.Add(entity.Address, clickCount);
             }
-            if (clickCount >= 25)
+            if (clickCount >= 15)
             {
                 LogMessage(entity.Path + " clicked too often!", 3);
             }
@@ -386,7 +388,11 @@ namespace AutoOpen
             File.WriteAllLines(DirectoryFullName + "\\chestWhitelist.txt", chestWhitelist);
         }
 
-
+        public override void AreaChange(AreaInstance area)
+        {
+            entities = new List<Entity>();
+            base.AreaChange(area);
+        }
     }
 
 }
