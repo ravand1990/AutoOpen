@@ -131,3 +131,15 @@ Metadata/Chests/BlightGenericWeapons
 Metadata/Chests/BlightTalismanT3
 Metadata/Chests/BlightArmourVeiled
 Metadata/Chests/BlightArmourJeweller
+Metadata/Chests/BlightBreachScarabRusted
+Metadata/Chests/BlightLegionIncubatorsT4
+Metadata/Chests/BlightScarabPolished
+Metadata/Chests/BlightArmourUnique
+Metadata/Chests/BlightProphecyTempestFire
+Metadata/Chests/BlightProphecyTempestChaos
+Metadata/Chests/BlightLegionSplinters
+Metadata/Chests/BlightWeaponShaper
+Metadata/Chests/BlightHarbingerBeachheadRed
+Metadata/Chests/BlightGenericMap
+Metadata/Chests/BlightWeaponDoubleVeiled
+Metadata/Chests/BlightWeaponUnique
