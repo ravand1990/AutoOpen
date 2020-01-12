@@ -143,3 +143,5 @@ Metadata/Chests/BlightHarbingerBeachheadRed
 Metadata/Chests/BlightGenericMap
 Metadata/Chests/BlightWeaponDoubleVeiled
 Metadata/Chests/BlightWeaponUnique
+Metadata/Chests/BlightLabyrinthBootEnchant
+Metadata/Chests/BlightAbyssBelt
