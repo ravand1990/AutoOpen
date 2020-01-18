@@ -148,3 +148,5 @@ Metadata/Chests/BlightAbyssBelt
 Metadata/Chests/BlightWeapon6LinkUnique
 Metadata/Chests/BlightTalismanUnique
 Metadata/Chests/BlightWeaponVeiled
+Metadata/Chests/BlightArmourShaper
+Metadata/Chests/BlightTrinketsUniques
