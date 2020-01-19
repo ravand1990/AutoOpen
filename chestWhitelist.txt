@@ -150,3 +150,4 @@ Metadata/Chests/BlightTalismanUnique
 Metadata/Chests/BlightWeaponVeiled
 Metadata/Chests/BlightArmourShaper
 Metadata/Chests/BlightTrinketsUniques
+Metadata/Chests/BlightHarbingerHorizonOrbHigh
