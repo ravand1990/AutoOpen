@@ -151,3 +151,5 @@ Metadata/Chests/BlightWeaponVeiled
 Metadata/Chests/BlightArmourShaper
 Metadata/Chests/BlightTrinketsUniques
 Metadata/Chests/BlightHarbingerHorizonOrbHigh
+Metadata/Chests/BlightWeaponElder
+Metadata/Chests/BlightGemsEmpowerEnhanceEnlighten3
