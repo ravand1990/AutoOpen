@@ -153,3 +153,6 @@ Metadata/Chests/BlightTrinketsUniques
 Metadata/Chests/BlightHarbingerHorizonOrbHigh
 Metadata/Chests/BlightWeaponElder
 Metadata/Chests/BlightGemsEmpowerEnhanceEnlighten3
+Metadata/Chests/BlightUniqueLeagueSpecific
+Metadata/Chests/BlightCurrencyHigh
+Metadata/Chests/BlightTrinketsAtlas
