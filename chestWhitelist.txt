@@ -156,3 +156,5 @@ Metadata/Chests/BlightGemsEmpowerEnhanceEnlighten3
 Metadata/Chests/BlightUniqueLeagueSpecific
 Metadata/Chests/BlightCurrencyHigh
 Metadata/Chests/BlightTrinketsAtlas
+Metadata/Chests/BlightLabyrinthTwiceEnchanted
+Metadata/Chests/StrongBoxes/Jeweller
