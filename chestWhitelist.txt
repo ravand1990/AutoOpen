@@ -158,3 +158,8 @@ Metadata/Chests/BlightCurrencyHigh
 Metadata/Chests/BlightTrinketsAtlas
 Metadata/Chests/BlightLabyrinthTwiceEnchanted
 Metadata/Chests/StrongBoxes/Jeweller
+Metadata/Chests/BlightProphecyTempestFrogs
+Metadata/Chests/BlightLabyrinthGloveEnchant
+Metadata/Chests/StrongBoxes/Large
+Metadata/Chests/BlightProphecyTempestRats
+Metadata/Chests/BlightProphecyTempestLightning
